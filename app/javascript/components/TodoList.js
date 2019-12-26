@@ -1,18 +1,29 @@
 import React, { useEffect, useState } from "react";
+import DeleteTodo from "./DeleteTodo";
 
 function TodoList() {
-  const [todos, setTodos] = useState([]);
+	const [todos, setTodos] = useState([]);
 
-  useEffect(() => {
-    const requestTodos = async () => {
-      const response = await fetch("/api/todos");
-      const { data } = await response.json();
-      setTodos(data);
-    };
-    requestTodos();
-  }, []);
+	function DelTodo(todo_id) {
+		// Refresh state after deleting Todo
+		if (DeleteTodo(todo_id)) {
+			setTodos(todos.filter(todo => todo.id != todo_id));
+		}
+	}
 
-  return todos.map(todo => <div>{todo.attributes.title}</div>);
+	useEffect(() => {
+		const csrfToken = document.querySelector("meta[name=csrf-token]").content;
+		const requestTodos = async () => {
+			const response = await fetch("/api/todos", {headers: {"X-CSRF-Token": csrfToken}});
+			const { data } = await response.json();
+			setTodos(data);
+		};
+		requestTodos();
+	}, []);
+
+	return todos.map(todo => 
+		<div>{todo.attributes.title} <button onClick={()=>DelTodo(todo.id)} className="delete-btn">Delete</button></div>
+	);
 }
 
 export default TodoList;
