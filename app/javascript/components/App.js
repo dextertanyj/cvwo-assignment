@@ -2,6 +2,7 @@ import React from "react";
 import { Router, Link } from "@reach/router";
 import TodoList from "./TodoList";
 import AddTodo from "./AddTodo";
+import EditTodo from "./EditTodo";
 
 function App() {
 	return (
@@ -15,6 +16,7 @@ function App() {
 			<Router>
 				<TodoList path="/" />
 				<AddTodo path="/add" />
+				<EditTodo path="/edit" />
 			</Router>
 		</div>
 	);

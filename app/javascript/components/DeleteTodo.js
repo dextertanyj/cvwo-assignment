@@ -1,6 +1,4 @@
 import React from "react";
-import { navigate } from "@reach/router";
-import { Formik, Field, Form } from "formik";
 
 function DeleteTodo(todo_id) {
 	const requestTodos = async () => {

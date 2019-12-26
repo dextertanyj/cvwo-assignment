@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link, navigate } from "@reach/router";
 import DeleteTodo from "./DeleteTodo";
 
 function TodoList() {
@@ -22,7 +23,11 @@ function TodoList() {
 	}, []);
 
 	return todos.map(todo => 
-		<div>{todo.attributes.title} <button onClick={()=>DelTodo(todo.id)} className="delete-btn">Delete</button></div>
+		<div>
+			{todo.attributes.title} 
+			<Link to="/edit" state={{todo: todo}}><button>Edit</button></Link>
+			<button onClick={()=>DelTodo(todo.id)} className="delete-btn">Delete</button>
+		</div>
 	);
 }
 
