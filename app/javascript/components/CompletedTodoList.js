@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, navigate } from "@reach/router";
 import DeleteTodo from "./DeleteTodo";
-import CompleteTodo from "./CompleteTodo";
+import IncompleteTodo from "./IncompleteTodo";
 
-function TodoList() {
+function CompletedTodoList() {
 	const [todos, setTodos] = useState([]);
 
 	function DelTodo(todo_id) {
@@ -13,8 +13,9 @@ function TodoList() {
 		}
 	}
 
-	function CompTodo(todo_id) {
-		if (CompleteTodo(todo_id)) {
+	function IncompTodo(todo_id) {
+		// Refresh state after marking Todo as incomplete
+		if (IncompleteTodo(todo_id)) {
 			setTodos(todos.filter(todo => todo.id != todo_id));
 		}
 	}
@@ -22,7 +23,8 @@ function TodoList() {
 	useEffect(() => {
 		const csrfToken = document.querySelector("meta[name=csrf-token]").content;
 		const requestTodos = async () => {
-			const response = await fetch("/api/todos?filter[completed]=false", {headers: {"X-CSRF-Token": csrfToken}});
+			// Fetch only completed Todos
+			const response = await fetch("/api/todos?filter[completed]=true", {headers: {"X-CSRF-Token": csrfToken}});
 			const { data } = await response.json();
 			setTodos(data);
 		};
@@ -32,11 +34,11 @@ function TodoList() {
 	return todos.map(todo => 
 		<div>
 			{todo.attributes.title} 
-			<button onClick={()=>CompTodo(todo.id)}>Mark As Completed</button>
+			<button onClick={()=>IncompTodo(todo.id)}>Mark As Incomplete</button>
 			<Link to="/edit" state={{todo: todo}}><button>Edit</button></Link>
 			<button onClick={()=>DelTodo(todo.id)}>Delete</button>
 		</div>
 	);
 }
 
-export default TodoList;
+export default CompletedTodoList;

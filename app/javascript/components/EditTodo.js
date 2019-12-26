@@ -38,6 +38,7 @@ function EditTodo(props) {
 		attributes: {
 			title: initialTitle,
 			description: initialDescription,
+			completed: false
 		}
 	}
 

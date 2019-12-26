@@ -34,7 +34,8 @@ function AddTodo() {
 				type: "todos",
 				attributes: {
 					title: "",
-					description: ""
+					description: "",
+					completed: "false"
 				}
 			}}
 			onSubmit={handleSubmit}

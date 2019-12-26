@@ -1,3 +1,5 @@
 class Api::TodoResource < JSONAPI::Resource
-  attributes :title, :description
+  attributes :title, :description, :completed
+
+  filter :completed
 end
