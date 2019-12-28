@@ -5,6 +5,7 @@ Rails.application.routes.draw do
 
 	namespace :api do
 		jsonapi_resources :todos
+		jsonapi_resources :categories
 	end
 
  	get "*path", to: "home#index", constraints: { format: "html" }

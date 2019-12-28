@@ -1,10 +1,21 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { navigate } from "@reach/router";
 import { Formik, Field, Form } from "formik";
 
 function EditTodo(props) {
 
+	const [categories, setCategories] = useState([]);
 	const todo = props.location.state.todo;
+
+	useEffect(() => {
+		const csrfToken = document.querySelector("meta[name=csrf-token]").content;
+		const requestCategories = async () => {
+			const response = await fetch("/api/categories", {headers: {"X-CSRF-Token": csrfToken}});
+			const { data } = await response.json();
+			setCategories(data);
+		};
+		requestCategories();
+	}, []);
 
 	const handleSubmit = values => {
 		const requestTodos = async () => {
@@ -31,6 +42,8 @@ function EditTodo(props) {
 
 	const initialTitle = todo.attributes.title;
 	const initialDescription = todo.attributes.description;
+	const initialStatus = todo.attributes.completed;
+	const initialCategory = todo.attributes.categoryid;
 
 	const formikValues = {
 		type: "todos",
@@ -38,7 +51,8 @@ function EditTodo(props) {
 		attributes: {
 			title: initialTitle,
 			description: initialDescription,
-			completed: false
+			categoryid: initialCategory,
+			completed: initialStatus
 		}
 	}
 
@@ -50,9 +64,18 @@ function EditTodo(props) {
 			onSubmit={handleSubmit}
 			>
 				<Form>
+				<label for="attributes.title">Title</label>
 				<Field type="text" name="attributes.title" />
+				<br />
+				<label for="attributes.description">Description</label>
 				<Field type="text" name="attributes.description" />
-
+				<br />
+				<label for="attributes.categoryid">Category</label>
+				<Field name="attributes.categoryid" as="select">
+					<option value="">All</option>
+					{categories.map(category => <option value={category.id}>{category.attributes.name}</option>)}
+				</Field>
+				<br />
 				<button type="submit">Update</button>
 				</Form>
 			</Formik>
