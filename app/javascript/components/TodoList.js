@@ -8,6 +8,29 @@ function TodoList(props) {
 	const [categories, setCategories] = useState([]);
 	const [selected, setSelected] = useState(null);
 	const [mode, setMode] = useState(false);
+	const [sort, setSort] = useState("default");
+
+	function changeSort(by) {
+		setSort(by);
+	}
+
+	function setTodosSorted(data) {
+		console.log(sort);
+		switch (sort) {
+			case "default":
+				setTodos(data.sort((a,b) => (a.id > b.id) ? 1 : -1));
+				break;
+			case "title":
+				setTodos(data.sort((a,b) => (a.attributes.title > b.attributes.title) ? 1 : -1));
+				break;
+			case "date":
+				setTodos(data.sort((a,b) => (a.attributes.duedate > b.attributes.duedate) ? 1 : -1));
+				break;
+			default:
+				setTodos(data.sort((a,b) => (a.id > b.id) ? 1 : -1));
+				break;
+		}
+	}
 
 	function ChangeSelected(category_name) {
 		setSelected(category_name);
@@ -35,12 +58,12 @@ function TodoList(props) {
 		const requestTodos = async () => {
 			let response;
 			if (selected != null) {
-				response = await fetch("/api/todos?filter[completed]=" + mode + "&filter[categoryid]="+selected, {headers: {"X-CSRF-Token": csrfToken}});
+				response = await fetch("/api/todos?filter[completed]=" + mode + "&filter[categoryid]=" + selected, {headers: {"X-CSRF-Token": csrfToken}});
 			} else {
 				response = await fetch("/api/todos?filter[completed]=" + mode, {headers: {"X-CSRF-Token": csrfToken}});
 			}
 			const { data } = await response.json();
-			setTodos(data);
+			setTodosSorted(data);
 		};
 		requestTodos();
 		const requestCategories = async () => {
@@ -49,12 +72,16 @@ function TodoList(props) {
 			setCategories(data);
 		};
 		requestCategories();
-	}, [selected, mode]);
+	}, [selected, mode, sort]);
 
 	return <div>
 		<nav>
 			Show:
 			<button onClick={()=>toggleMode()}>{mode?"Incomplete Todos":"Completed Todos"}</button>
+			Sort By:
+			<button onClick={()=>changeSort("default")}>Default</button>
+			<button onClick={()=>changeSort("title")}>Title</button>
+			<button onClick={()=>changeSort("date")}>Date</button>
 		</nav>
 		<nav>
 			Categories:
@@ -65,6 +92,7 @@ function TodoList(props) {
 		{todos.map(todo => 
 			<div>
 				{todo.attributes.title} 
+				{todo.attributes.duedate}
 				{todo.attributes.completed == "false" 
 					? <button onClick={()=>markTodo(todo.id, false)}>Mark As Completed</button> 
 					: <button onClick={()=>markTodo(todo.id,true)}>Mark As Incomplete</button>
