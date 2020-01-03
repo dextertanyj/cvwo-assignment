@@ -84,9 +84,13 @@ function TodoList () {
 	return <div>
 		<Segment>
 			<Header as="h4">Categories:&nbsp;&nbsp;
-				<Button onClick={()=>changeSelected(null)}>All</Button>
+				<Button 
+					active = {selected == null}
+					onClick={()=>changeSelected(null)}>All</Button>
 				{categories.map(category => 
-					<Button onClick={()=>changeSelected(category.id)}>
+					<Button 
+						active = {selected == category.id}
+						onClick={()=>changeSelected(category.id)}>
 						{category.attributes.name}
 					</Button>)}
 			</Header>
