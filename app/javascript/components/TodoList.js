@@ -1,38 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Link, navigate } from "@reach/router";
+import { Link } from "@reach/router";
 import DeleteTodo from "./DeleteTodo";
 import MarkTodo from "./MarkTodo";
+import { Item, Header, Grid, Segment, Dropdown, Button } from 'semantic-ui-react';
 
-function TodoList(props) {
+function TodoList () {
 	const [todos, setTodos] = useState([]);
 	const [categories, setCategories] = useState([]);
 	const [selected, setSelected] = useState(null);
 	const [mode, setMode] = useState(false);
 	const [sort, setSort] = useState("default");
 
+	const sortOptions = [
+		{ text: "Default", value: "default" },
+		{ text: "Title", value: "title" },
+		{ text: "Due Date", value: "date" }
+	]
+
 	function changeSort(by) {
 		setSort(by);
 	}
 
-	function setTodosSorted(data) {
-		console.log(sort);
-		switch (sort) {
-			case "default":
-				setTodos(data.sort((a,b) => (a.id > b.id) ? 1 : -1));
-				break;
-			case "title":
-				setTodos(data.sort((a,b) => (a.attributes.title > b.attributes.title) ? 1 : -1));
-				break;
-			case "date":
-				setTodos(data.sort((a,b) => (a.attributes.duedate > b.attributes.duedate) ? 1 : -1));
-				break;
-			default:
-				setTodos(data.sort((a,b) => (a.id > b.id) ? 1 : -1));
-				break;
-		}
-	}
-
-	function ChangeSelected(category_name) {
+	function changeSelected(category_name) {
 		setSelected(category_name);
 	}
 
@@ -40,7 +29,7 @@ function TodoList(props) {
 		setMode(!mode);
 	}
 
-	function DelTodo(todo_id) {
+	function deleteTodo(todo_id) {
 		// Refresh state after deleting Todo
 		if (DeleteTodo(todo_id)) {
 			setTodos(todos.filter(todo => todo.id != todo_id));
@@ -53,55 +42,96 @@ function TodoList(props) {
 		}
 	}
 
+	function setTodosSorted(data) {
+		switch (sort) {
+			case "default":
+				setTodos(data.sort((a,b) => (a.id > b.id) ? 1 : -1));
+				break;
+			case "title":
+				setTodos(data.sort((a,b) => (a.attributes.title > b.attributes.title) ? 1 : -1));
+				break;
+			case "date":
+				setTodos(data.sort((a,b) => (a.attributes.duedate == null) ||
+					(a.attributes.duedate > b.attributes.duedate) ? 1 : -1));
+				break;
+			default:
+				setTodos(data.sort((a,b) => (a.id > b.id) ? 1 : -1));
+				break;
+		}
+	}
+
 	useEffect(() => {
-		const csrfToken = document.querySelector("meta[name=csrf-token]").content;
+		const requestCategories = async () => {
+			const response = await fetch("/api/categories");
+			const { data } = await response.json();
+			setCategories(data);
+		};
+		requestCategories();
 		const requestTodos = async () => {
 			let response;
 			if (selected != null) {
-				response = await fetch("/api/todos?filter[completed]=" + mode + "&filter[categoryid]=" + selected, {headers: {"X-CSRF-Token": csrfToken}});
+				response = await fetch("/api/todos?filter[completed]=" + mode + 
+				"&filter[categoryid]=" + selected);
 			} else {
-				response = await fetch("/api/todos?filter[completed]=" + mode, {headers: {"X-CSRF-Token": csrfToken}});
+				response = await fetch("/api/todos?filter[completed]=" + mode);
 			}
 			const { data } = await response.json();
 			setTodosSorted(data);
 		};
 		requestTodos();
-		const requestCategories = async () => {
-			const response = await fetch("/api/categories", {headers: {"X-CSRF-Token": csrfToken}});
-			const { data } = await response.json();
-			setCategories(data);
-		};
-		requestCategories();
 	}, [selected, mode, sort]);
 
 	return <div>
-		<nav>
-			Show:
-			<button onClick={()=>toggleMode()}>{mode?"Incomplete Todos":"Completed Todos"}</button>
-			Sort By:
-			<button onClick={()=>changeSort("default")}>Default</button>
-			<button onClick={()=>changeSort("title")}>Title</button>
-			<button onClick={()=>changeSort("date")}>Date</button>
-		</nav>
-		<nav>
-			Categories:
-			<button onClick={()=>ChangeSelected(null)}>All</button>
-			{categories.map(category => <button onClick={()=>ChangeSelected(category.id)}>{category.attributes.name}</button>)}
-		</nav>
-		<div>
-		{todos.map(todo => 
-			<div>
-				{todo.attributes.title} 
-				{todo.attributes.duedate}
-				{todo.attributes.completed == "false" 
-					? <button onClick={()=>markTodo(todo.id, false)}>Mark As Completed</button> 
-					: <button onClick={()=>markTodo(todo.id,true)}>Mark As Incomplete</button>
-				}
-				<Link to="/edittodo" state={{todo: todo}}><button>Edit</button></Link>
-				<button onClick={()=>DelTodo(todo.id)}>Delete</button>
-			</div>
-			)}
-		</div>
+		<Segment>
+			<Header as="h4">Categories:&nbsp;&nbsp;
+				<Button onClick={()=>changeSelected(null)}>All</Button>
+				{categories.map(category => 
+					<Button onClick={()=>changeSelected(category.id)}>
+						{category.attributes.name}
+					</Button>)}
+			</Header>
+		</Segment>
+		<Grid padded>
+			<Grid.Column>
+				<Button onClick={()=>toggleMode()}>{mode?"Incomplete":"Completed"}</Button>
+				<Dropdown
+					text='Sort By'
+					onChange = {(e, { value }) => changeSort(value)}
+					options={ sortOptions }
+					button
+				/>
+			</Grid.Column>
+		</Grid>
+		<Grid padded>
+			<Grid.Column>
+				<Item.Group divided>
+					{todos.map(todo => 
+					<Item><Item.Content>
+						<Item.Header>{todo.attributes.title}</Item.Header>
+						<Item.Meta>
+							{todo.attributes.duedate} 
+							{todo.attributes.duedate && todo.attributes.categoryid ? " | " : ""} 
+							{/* Catch error when categories has not been fetched */}
+							{(todo.attributes.categoryid == null || categories.length == 0)
+								? ""
+								: categories.find(cat => cat.id == todo.attributes.categoryid).attributes.name}
+						</Item.Meta>
+						<Item.Description>
+							{todo.attributes.description}
+						</Item.Description>
+						<Item.Extra>
+							<Button floated='right' negative onClick={()=>deleteTodo(todo.id)}>Delete</Button>
+							<Button floated='right' secondary as={ Link } to="/edittodo" state={{todo: todo}}>Edit</Button>
+							{todo.attributes.completed == "false" 
+								? <Button floated='right' primary onClick={()=>markTodo(todo.id, false)}>Mark As Completed</Button> 
+								: <Button floated='right' primary onClick={()=>markTodo(todo.id,true)}>Mark As Incomplete</Button>
+							}
+						</Item.Extra>
+					</Item.Content></Item>
+					)}
+				</Item.Group>
+			</Grid.Column>
+		</Grid>
 	</div>
 }
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, navigate } from "@reach/router";
 import DeleteCategory from "./DeleteCategory";
+import { Item, Grid, Button } from 'semantic-ui-react';
 
 function TodoList(props) {
 	const [categories, setCategories] = useState([]);
@@ -23,15 +24,23 @@ function TodoList(props) {
 	}, []);
 
 	return <div>
-		<div>
-		{categories.map(category => 
-			<div>
-				{category.attributes.name} 
-				<Link to="/editcategory" state={{category: category}}><button>Edit</button></Link>
-				<button onClick={()=>deleteCategory(category)}>Delete</button>
-			</div>
-			)}
-		</div>
+		<Grid padded>
+			<Grid.Column>
+				<Item.Group divided>
+					{categories.map(category => 
+						<Item>
+							<Item.Content>
+								<Item.Header>{category.attributes.name}</Item.Header>
+								<Item.Extra>
+				 					<Button floated='right' negative onClick={()=>deleteCategory(category)}>Delete</Button>
+				 					<Button floated='right' secondary as={ Link } to="/editcategory" state={{category: category}}>Edit</Button>
+				 				</Item.Extra>
+				 			</Item.Content>
+				 		</Item>
+					)}
+				</Item.Group>
+			</Grid.Column>
+		</Grid>
 	</div>
 }
 
