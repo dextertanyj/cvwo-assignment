@@ -6,6 +6,7 @@ import EditTodo from "./EditTodo";
 import AddCategory from "./AddCategory";
 import ManageCategory from "./ManageCategory"
 import EditCategory from "./EditCategory";
+import SearchTodo from "./SearchTodo";
 import { Menu, Icon, Container } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 
@@ -17,7 +18,7 @@ function App() {
 				<Container textAlign='center'>
 				<h1><Icon name="book" />TODO LIST</h1>
 				</Container>
-				<Menu fluid widths={4}>
+				<Menu fluid widths={5}>
 					<Menu.Item as={ Link } to='/'>
   						<Icon name='home' />
  						 Home
@@ -34,6 +35,10 @@ function App() {
   						<Icon name='setting' />
  						 Manage Categories
 					</Menu.Item>
+					<Menu.Item as={ Link } to='/searchtodo'>
+  						<Icon name='search' />
+ 						 Search
+					</Menu.Item>
 				</Menu>
 			</div>
 			<Router>
@@ -43,6 +48,7 @@ function App() {
 				<AddCategory path="/addcategory" />
 				<ManageCategory path="/managecategory" />
 				<EditCategory path="/editcategory" />
+				<SearchTodo path="/searchtodo" />
 			</Router>
 		</div>
 	);
