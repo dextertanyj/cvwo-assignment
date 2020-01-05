@@ -12,6 +12,5 @@
  *
  *= require_tree .
  *= require_self
- *= require semantic-ui-css/semantic.min.css
  *= require react-datepicker/dist/react-datepicker.css
  */
