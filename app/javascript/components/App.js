@@ -51,7 +51,7 @@ function App() {
 				<h1><Icon name="book" />TODO LIST</h1>
 				</Container>
 				{ LoggedIn == "LOGGEDIN" &&
-				<Menu fluid widths={6}>
+				<Menu stackable fluid widths={6}>
 					<Menu.Item as={ Link } to='/home'>
   						<Icon name='home' />
  						 Home

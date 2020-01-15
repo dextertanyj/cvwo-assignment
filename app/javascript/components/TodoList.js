@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "@reach/router";
 import DeleteTodo from "./DeleteTodo";
 import MarkTodo from "./MarkTodo";
-import { Item, Header, Grid, Segment, Dropdown, Button } from 'semantic-ui-react';
+import { Item, Header, Grid, Menu, Dropdown, Button } from 'semantic-ui-react';
 
 function TodoList (props) {
 
@@ -64,40 +64,44 @@ function TodoList (props) {
 
 	useEffect(() => {
 		setUserid(props.userid);
-		const requestCategories = async () => {
-			const response = await fetch("/api/categories?filter[userid]=" + userid);
-			const { data } = await response.json();
-			setCategories(data);
-		};
-		requestCategories();
-		const requestTodos = async () => {
-			let response;
-			if (selected != null) {
-				response = await fetch("/api/todos?filter[userid]=" + userid + "&filter[completed]=" + mode + 
-				"&filter[categoryid]=" + selected);
-			} else {
-				response = await fetch("/api/todos?filter[userid]=" + userid + "&filter[completed]=" + mode);
-			}
-			const { data } = await response.json();
-			setTodosSorted(data);
-		};
-		requestTodos();
+		if (userid != null) {
+			const requestCategories = async () => {
+				const response = await fetch("/api/categories?filter[userid]=" + userid);
+				const { data } = await response.json();
+				setCategories(data);
+			};
+			requestCategories();
+			const requestTodos = async () => {
+				let response;
+				if (selected != null) {
+					response = await fetch("/api/todos?filter[userid]=" + userid + "&filter[completed]=" + mode + 
+					"&filter[categoryid]=" + selected);
+				} else {
+					response = await fetch("/api/todos?filter[userid]=" + userid + "&filter[completed]=" + mode);
+				}
+				const { data } = await response.json();
+				setTodosSorted(data);
+			};
+			requestTodos();
+		}
 	}, [selected, mode, sort, props, userid]);
 
 	return <div>
-		<Segment>
-			<Header as="h4">Categories:&nbsp;&nbsp;
-				<Button 
-					active = {selected == null}
-					onClick={()=>changeSelected(null)}>All</Button>
+		<Menu stackable inverted>
+			<Menu.Item>
+			<Header inverted as="h4">Categories:</Header>
+			</Menu.Item>
+			<Menu.Item 
+				active = {selected == null}
+				onClick={()=>changeSelected(null)}>All
+			</Menu.Item>
 				{categories.map(category => 
-					<Button 
-						active = {selected == category.id}
-						onClick={()=>changeSelected(category.id)}>
-						{category.attributes.name}
-					</Button>)}
-			</Header>
-		</Segment>
+			<Menu.Item 
+					active = {selected == category.id}
+					onClick={()=>changeSelected(category.id)}>
+					{category.attributes.name}
+					</Menu.Item>)}
+		</Menu>
 		<Grid padded>
 			<Grid.Column>
 				<Button onClick={()=>toggleMode()}>{mode?"Incomplete":"Completed"}</Button>

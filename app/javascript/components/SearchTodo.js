@@ -27,20 +27,22 @@ function SearchTodo (props) {
 
 	useEffect(() => {
 		setUserid(props.userid);
-		const requestCategories = async () => {
-			const response = await fetch("/api/categories?filter[userid]=" + userid);
-			const { data } = await response.json();
-			setCategories(data);
-		};
-		requestCategories();
-		const requestTodos = async () => {
-			let response = await fetch("/api/todos?filter[userid]=" + userid);
-			const { data } = await response.json();
-			setTodos(data.filter(todo => (
-                todo.attributes.description.toLowerCase().includes(search.toLowerCase()) || 
-                todo.attributes.title.toLowerCase().includes(search.toLowerCase()))));
-		};
-        requestTodos();
+		if (userid != null) {
+			const requestCategories = async () => {
+				const response = await fetch("/api/categories?filter[userid]=" + userid);
+				const { data } = await response.json();
+				setCategories(data);
+			};
+			requestCategories();
+			const requestTodos = async () => {
+				let response = await fetch("/api/todos?filter[userid]=" + userid);
+				const { data } = await response.json();
+				setTodos(data.filter(todo => (
+					todo.attributes.description.toLowerCase().includes(search.toLowerCase()) || 
+					todo.attributes.title.toLowerCase().includes(search.toLowerCase()))));
+			};
+			requestTodos();
+		}
         setUpdating(false);
 	}, [updating, search, props, userid]);
 

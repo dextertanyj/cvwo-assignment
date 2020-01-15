@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, navigate } from "@reach/router";
+import { Link } from "@reach/router";
 import DeleteCategory from "./DeleteCategory";
-import { Item, Grid, Button, Confirm } from 'semantic-ui-react';
+import { Item, Grid, Button, Confirm, Message } from 'semantic-ui-react';
 
 function TodoList(props) {
 
@@ -34,18 +34,21 @@ function TodoList(props) {
 
 	useEffect(() => {
 		setUserid(props.userid);
-		const requestCategories = async () => {
-			const response = await fetch("/api/categories?filter[userid]=" + userid);
-			const { data } = await response.json();
-			setCategories(data);
-		};
-		requestCategories();
+		if (userid != null) {
+			const requestCategories = async () => {
+				const response = await fetch("/api/categories?filter[userid]=" + userid);
+				const { data } = await response.json();
+				setCategories(data);
+			};
+			requestCategories();
+		}
 	}, [userid, props]);
 
 	return <div>
 		<Grid padded>
 			<Grid.Column>
 				<Item.Group divided>
+					{(categories.length == 0) && <Message>You have not created any categories.</Message>}
 					{categories.map(category => 
 						<Item>
 							<Item.Content>
