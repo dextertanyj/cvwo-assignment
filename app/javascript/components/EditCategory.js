@@ -5,6 +5,8 @@ import { Grid } from 'semantic-ui-react';
 
 function EditCategory(props) {
 
+	const { userid } = props
+
 	const [error, setError] = useState(false);
 	const category = props.location.state.category;
 
@@ -20,7 +22,7 @@ function EditCategory(props) {
 			});
 			setError(false);
 			if (response.ok) {
-				navigate("/");
+				navigate("/home");
 			} else if (response.status === 422) {
 				setError(true);
 			}
@@ -32,7 +34,8 @@ function EditCategory(props) {
 		type: "categories",
 		id: category.id,
 		attributes: {
-			name: category.attributes.name
+			name: category.attributes.name,
+			userid: userid
 		}
 	}
 

@@ -3,7 +3,9 @@ import { navigate } from "@reach/router";
 import CategoryForm from "./_CategoryForm";
 import { Grid } from 'semantic-ui-react'
 
-function AddCategory () {
+function AddCategory(props) {
+
+	const { userid } = props;
 
 	const [error, setError] = useState(false);
 
@@ -19,7 +21,7 @@ function AddCategory () {
 			});
 			setError(false); // Reset error state to allow reflash error message
 			if (response.status === 201) {
-				navigate("/");
+				navigate("/home");
 			} else if (response.status === 422) {
 				setError(true)
 			}
@@ -30,7 +32,8 @@ function AddCategory () {
 	const formikValues = {
 		type: "categories",
 		attributes: {
-			name: ""
+			name: "",
+			userid: userid
 		}
 	}
 

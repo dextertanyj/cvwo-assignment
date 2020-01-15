@@ -1,5 +1,5 @@
-import React from "react";
-import { Router, Link } from "@reach/router";
+import React, { useState, useEffect } from "react";
+import { Router, Link, navigate } from "@reach/router";
 import TodoList from "./TodoList";
 import AddTodo from "./AddTodo";
 import EditTodo from "./EditTodo";
@@ -7,17 +7,52 @@ import AddCategory from "./AddCategory";
 import ManageCategory from "./ManageCategory"
 import EditCategory from "./EditCategory";
 import SearchTodo from "./SearchTodo";
+import SignIn from "./SignIn";
+import Registration from "./Registration";
+import LogOut from "./_LogOut";
 import { Menu, Icon, Container } from 'semantic-ui-react';
 
 function App() {
+
+	const [user, setUser] = useState({});
+	const [LoggedIn, setLoggedIn] = useState("LOGGEDOUT");
+	
+	function handleLogOut() {
+		if (LogOut()) {
+			setUser({});
+			setLoggedIn("LOGGEDOUT");
+			navigate("/");
+		}
+	}
+
+	function handleLogIn(user) {
+		setLoggedIn("LOGGEDIN");
+		setUser(user);
+		navigate("/home");
+	}
+
+	useEffect(() => {
+		const requestCurrentUser = async () => {
+			const response = await fetch("/logged_in");
+			const { logged_in, user } = await response.json();
+			if (logged_in) {
+				setLoggedIn("LOGGEDIN");
+				setUser(user);
+				navigate("/home");
+			}
+		};
+		requestCurrentUser();
+	}, []);
+
 	return (
 		<div>
 			<div>
 				<Container textAlign='center'>
 				<h1><Icon name="book" />TODO LIST</h1>
 				</Container>
-				<Menu fluid widths={5}>
-					<Menu.Item as={ Link } to='/'>
+				{ LoggedIn == "LOGGEDIN" &&
+				<Menu fluid widths={6}>
+					<Menu.Item as={ Link } to='/home'>
   						<Icon name='home' />
  						 Home
 					</Menu.Item>
@@ -37,16 +72,23 @@ function App() {
   						<Icon name='search' />
  						 Search
 					</Menu.Item>
+					<Menu.Item onClick={() => handleLogOut()}>
+  						<Icon name='log out'/>
+ 						 Log Out
+					</Menu.Item>
 				</Menu>
+				}
 			</div>
 			<Router>
-				<TodoList path="/" />
-				<AddTodo path="/add" />
-				<EditTodo path="/edittodo" />
-				<AddCategory path="/addcategory" />
-				<ManageCategory path="/managecategory" />
-				<EditCategory path="/editcategory" />
-				<SearchTodo path="/searchtodo" />
+				<SignIn path="/" helperLogIn={handleLogIn} />
+				<Registration path="/registration" helperLogIn={handleLogIn} />
+				<TodoList path="/home" userid={user.id}/>
+				<AddTodo path="/add" userid={user.id}/>
+				<EditTodo path="/edittodo" userid={user.id}/>
+				<AddCategory path="/addcategory" userid={user.id}/>
+				<ManageCategory path="/managecategory" userid={user.id}/>
+				<EditCategory path="/editcategory" userid={user.id}/>
+				<SearchTodo path="/searchtodo" userid={user.id}/>
 			</Router>
 		</div>
 	);

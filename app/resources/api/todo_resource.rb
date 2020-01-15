@@ -1,6 +1,7 @@
 class Api::TodoResource < JSONAPI::Resource
-  attributes :title, :description, :categoryid, :duedate, :completed
+  attributes :title, :description, :categoryid, :duedate, :completed, :userid
   has_one :category
-  filters :categoryid
+  filter :userid
+  filter :categoryid
   filter :completed
 end

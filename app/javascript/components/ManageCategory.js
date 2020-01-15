@@ -4,6 +4,8 @@ import DeleteCategory from "./DeleteCategory";
 import { Item, Grid, Button, Confirm } from 'semantic-ui-react';
 
 function TodoList(props) {
+
+	const [userid, setUserid] = useState(null);
 	const [categories, setCategories] = useState([]);
 	const [confirm, setConfirm] = useState(false);
 	const [selected, setSelected] = useState();
@@ -31,13 +33,14 @@ function TodoList(props) {
 	}
 
 	useEffect(() => {
+		setUserid(props.userid);
 		const requestCategories = async () => {
-			const response = await fetch("/api/categories");
+			const response = await fetch("/api/categories?filter[userid]=" + userid);
 			const { data } = await response.json();
 			setCategories(data);
 		};
 		requestCategories();
-	}, []);
+	}, [userid, props]);
 
 	return <div>
 		<Grid padded>

@@ -4,7 +4,9 @@ import DeleteTodo from "./DeleteTodo";
 import MarkTodo from "./MarkTodo";
 import { Item, Header, Grid, Segment, Dropdown, Button } from 'semantic-ui-react';
 
-function TodoList () {
+function TodoList (props) {
+
+	const [userid, setUserid] = useState(null);
 	const [todos, setTodos] = useState([]);
 	const [categories, setCategories] = useState([]);
 	const [selected, setSelected] = useState(null);
@@ -61,8 +63,9 @@ function TodoList () {
 	}
 
 	useEffect(() => {
+		setUserid(props.userid);
 		const requestCategories = async () => {
-			const response = await fetch("/api/categories");
+			const response = await fetch("/api/categories?filter[userid]=" + userid);
 			const { data } = await response.json();
 			setCategories(data);
 		};
@@ -70,16 +73,16 @@ function TodoList () {
 		const requestTodos = async () => {
 			let response;
 			if (selected != null) {
-				response = await fetch("/api/todos?filter[completed]=" + mode + 
+				response = await fetch("/api/todos?filter[userid]=" + userid + "&filter[completed]=" + mode + 
 				"&filter[categoryid]=" + selected);
 			} else {
-				response = await fetch("/api/todos?filter[completed]=" + mode);
+				response = await fetch("/api/todos?filter[userid]=" + userid + "&filter[completed]=" + mode);
 			}
 			const { data } = await response.json();
 			setTodosSorted(data);
 		};
 		requestTodos();
-	}, [selected, mode, sort]);
+	}, [selected, mode, sort, props, userid]);
 
 	return <div>
 		<Segment>

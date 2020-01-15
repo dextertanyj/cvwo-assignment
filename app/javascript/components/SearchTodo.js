@@ -4,7 +4,8 @@ import DeleteTodo from "./DeleteTodo";
 import MarkTodo from "./MarkTodo";
 import { Item, Grid, Button, Input } from 'semantic-ui-react';
 
-function SearchTodo () {
+function SearchTodo (props) {
+	const [userid, setUserid] = useState(null);
     const [todos, setTodos] = useState([]);
     const [categories, setCategories] = useState([]);
     const [search, setSearch] = useState("");
@@ -25,14 +26,15 @@ function SearchTodo () {
 	}
 
 	useEffect(() => {
+		setUserid(props.userid);
 		const requestCategories = async () => {
-			const response = await fetch("/api/categories");
+			const response = await fetch("/api/categories?filter[userid]=" + userid);
 			const { data } = await response.json();
 			setCategories(data);
 		};
 		requestCategories();
 		const requestTodos = async () => {
-			let response = await fetch("/api/todos");
+			let response = await fetch("/api/todos?filter[userid]=" + userid);
 			const { data } = await response.json();
 			setTodos(data.filter(todo => (
                 todo.attributes.description.toLowerCase().includes(search.toLowerCase()) || 
@@ -40,7 +42,7 @@ function SearchTodo () {
 		};
         requestTodos();
         setUpdating(false);
-	}, [updating, search]);
+	}, [updating, search, props, userid]);
 
 	return <div>
 		<Grid padded>

@@ -1,4 +1,5 @@
 class Api::CategoryResource < JSONAPI::Resource
-  attributes :name
+  attributes :name, :userid
   has_many :todos
+  filter :userid
 end

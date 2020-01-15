@@ -6,13 +6,17 @@ import { Grid } from 'semantic-ui-react';
 
 function EditTodo(props) {
 
+	// UserID prop is not immediately available sometimes. 
+	// Declare as state so that it will get updated when available.
+	const [userid, setUserid] = useState(null);
 	const [categories, setCategories] = useState([]);
 	const [error, setError] = useState(false);
 	const todo = props.location.state.todo;
 
 	useEffect(() => {
+		setUserid(props.userid);
 		const requestCategories = async () => {
-			const response = await fetch("/api/categories");
+			const response = await fetch("/api/categories?filter[userid]=" + userid);
 			const { data } = await response.json();
 			setCategories(data);
 		};
@@ -39,7 +43,7 @@ function EditTodo(props) {
 			});
 			setError(false);
 			if (response.ok) {
-				navigate("/");
+				navigate("/home");
 			} else if (response.status === 422) {
 				setError(true);
 			}
@@ -54,6 +58,7 @@ function EditTodo(props) {
 			title: todo.attributes.title,
 			description: todo.attributes.description,
 			categoryid: todo.attributes.categoryid,
+			userid: userid,
 			duedate: new Date(todo.attributes.duedate),
 			completed: todo.attributes.completed
 		}

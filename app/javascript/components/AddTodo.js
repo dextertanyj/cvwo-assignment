@@ -4,14 +4,18 @@ import TimezoneFix from './_TimezoneFix';
 import TodoForm from './_TodoForm';
 import { Grid } from 'semantic-ui-react';
 
-function AddTodo() {
+function AddTodo(props) {
 
+	// UserID prop is not immediately available sometimes. 
+	// Declare as state so that it will get updated when available.
+	const [userid, setUserid] = useState(props.userid);
 	const [categories, setCategories] = useState([]);
 	const [error, setError] = useState(false);
 
 	useEffect(() => {
+		setUserid(props.userid);
 		const requestCategories = async () => {
-			const response = await fetch("/api/categories");
+			const response = await fetch("/api/categories?filter[userid]=" + userid);
 			const { data } = await response.json();
 			setCategories(data);
 		};
@@ -38,7 +42,7 @@ function AddTodo() {
 			});
 			setError(false);
 			if (response.status === 201) {
-				navigate("/");
+				navigate("/home");
 			} else if (response.status === 422) {
 				setError(true);
 			}
@@ -54,6 +58,7 @@ function AddTodo() {
 			duedate: "",
 			completed: "false",
 			categoryid: null,
+			userid: userid
 		}
 	}
 
