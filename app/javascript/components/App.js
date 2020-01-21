@@ -16,6 +16,7 @@ function App() {
 
 	const [user, setUser] = useState({});
 	const [LoggedIn, setLoggedIn] = useState("LOGGEDOUT");
+	const [token, setToken] = useState("");
 	
 	function handleLogOut() {
 		if (LogOut()) {
@@ -34,11 +35,14 @@ function App() {
 	useEffect(() => {
 		const requestCurrentUser = async () => {
 			const response = await fetch("/logged_in");
-			const { logged_in, user } = await response.json();
+			const { logged_in, user, auth_token } = await response.json();
 			if (logged_in) {
 				setLoggedIn("LOGGEDIN");
 				setUser(user);
 				navigate("/home");
+				setToken(auth_token)
+			} else {
+				navigate("/")
 			}
 		};
 		requestCurrentUser();
@@ -82,13 +86,13 @@ function App() {
 			<Router>
 				<SignIn path="/" helperLogIn={handleLogIn} />
 				<Registration path="/registration" helperLogIn={handleLogIn} />
-				<TodoList path="/home" userid={user.id}/>
-				<AddTodo path="/add" userid={user.id}/>
-				<EditTodo path="/edittodo" userid={user.id}/>
-				<AddCategory path="/addcategory" userid={user.id}/>
-				<ManageCategory path="/managecategory" userid={user.id}/>
-				<EditCategory path="/editcategory" userid={user.id}/>
-				<SearchTodo path="/searchtodo" userid={user.id}/>
+				<TodoList path="/home" userid={user.id} authtoken={token}/>
+				<AddTodo path="/add" userid={user.id} authtoken={token}/>
+				<EditTodo path="/edittodo" userid={user.id} authtoken={token}/>
+				<AddCategory path="/addcategory" userid={user.id} authtoken={token}/>
+				<ManageCategory path="/managecategory" userid={user.id} authtoken={token}/>
+				<EditCategory path="/editcategory" userid={user.id} authtoken={token}/>
+				<SearchTodo path="/searchtodo" userid={user.id} authtoken={token}/>
 			</Router>
 		</div>
 	);

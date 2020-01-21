@@ -31,7 +31,7 @@ function TodoList (props) {
 		setMode(!mode);
 	}
 
-	function deleteTodo(todo_id) {
+	function deleteTodoHandler(todo_id) {
 		// Refresh state after deleting Todo
 		if (DeleteTodo(todo_id)) {
 			setTodos(todos.filter(todo => todo.id != todo_id));
@@ -84,7 +84,7 @@ function TodoList (props) {
 			};
 			requestTodos();
 		}
-	}, [selected, mode, sort, props, userid]);
+	}, [selected, mode, sort, userid]);
 
 	return <div>
 		<Menu stackable inverted>
@@ -131,7 +131,7 @@ function TodoList (props) {
 							{todo.attributes.description}
 						</Item.Description>
 						<Item.Extra>
-							<Button floated='right' negative onClick={()=>deleteTodo(todo.id)}>Delete</Button>
+							<Button floated='right' negative onClick={()=>deleteTodoHandler(todo.id)}>Delete</Button>
 							<Button floated='right' secondary as={ Link } to="/edittodo" state={{todo: todo}}>Edit</Button>
 							{todo.attributes.completed == "false" 
 								? <Button floated='right' primary onClick={()=>markTodo(todo.id, false)}>Mark As Completed</Button> 

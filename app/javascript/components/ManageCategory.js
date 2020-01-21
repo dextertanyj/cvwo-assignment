@@ -5,7 +5,7 @@ import { Item, Grid, Button, Confirm, Message } from 'semantic-ui-react';
 
 function TodoList(props) {
 
-	const [userid, setUserid] = useState(null);
+	const [userid, setUserid] = useState(props.userid);
 	const [categories, setCategories] = useState([]);
 	const [confirm, setConfirm] = useState(false);
 	const [selected, setSelected] = useState();
@@ -16,7 +16,7 @@ function TodoList(props) {
 	}
 
 	function close () {
-		deleteCategory(selected);
+		deleteCategoryHandler(selected);
 		setConfirm(false);
 	}
 	
@@ -25,9 +25,9 @@ function TodoList(props) {
 		setConfirm(false);
 	}
 
-	function deleteCategory(category) {
+	function deleteCategoryHandler(category) {
 		// Refresh state after deleting Category
-		if (DeleteCategory(category)) {
+		if (DeleteCategory(userid, category)) {
 			setCategories(categories.filter(cat => cat.id != category.id));
 		}
 	}
@@ -42,7 +42,7 @@ function TodoList(props) {
 			};
 			requestCategories();
 		}
-	}, [userid, props]);
+	}, [userid]);
 
 	return <div>
 		<Grid padded>

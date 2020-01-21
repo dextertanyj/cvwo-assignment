@@ -2,7 +2,7 @@ import React from "react";
 import { Formik, Field } from "formik";
 import { Form, Button, Message } from 'semantic-ui-react'
 
-function CategoryForm (formikValues, handleSubmit, error) {
+function CategoryForm (categories, formikValues, handleSubmit, error) {
 	
 	let errormsg = 'Category name cannot be blank.';
 
@@ -11,6 +11,9 @@ function CategoryForm (formikValues, handleSubmit, error) {
 		if (value === 'All') {
 			error = true;
 			errormsg = '"All" has been reserved by the system. Please choose another name.';
+		} else if (categories.filter(name => name == value).length > 0) {
+			error = true;
+			errormsg = '"' + value + '" already exists. Please choose another name.';
 		}
 		return error;
 	}
@@ -26,6 +29,7 @@ function CategoryForm (formikValues, handleSubmit, error) {
 						<Field 
 							type = "text" 
 							name = "attributes.name" 
+							required = {true}
 							validate = { validateName }
 						/>
 					</Form.Field>

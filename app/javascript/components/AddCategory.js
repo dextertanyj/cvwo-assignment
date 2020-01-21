@@ -1,13 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { navigate } from "@reach/router";
 import CategoryForm from "./_CategoryForm";
 import { Grid } from 'semantic-ui-react'
 
 function AddCategory(props) {
 
-	const { userid } = props;
-
+	// UserID prop is not immediately available sometimes. 
+	// Declare as state so that it will get updated when available.
+	const [userid, setUserid] = useState(props.userid);
 	const [error, setError] = useState(false);
+	const [categories, setCategories] = useState([]);
+
+	useEffect(() => {
+		setUserid(props.userid);
+		if (userid != null) {
+			const requestCategories = async () => {
+				const response = await fetch("/api/categories?filter[userid]=" + userid);
+				const { data } = await response.json();
+				setCategories(data.map(cat => cat.attributes.name));
+			};
+			requestCategories();
+		}
+	}, [userid]);
 
 	const handleSubmit = values => {
 		const requestCategories = async () => {
@@ -42,7 +56,7 @@ function AddCategory(props) {
 			<Grid padded>
 				<Grid.Column>
 					<h2>Add A New Category</h2>
-					{ CategoryForm(formikValues, handleSubmit, error) }
+					{ CategoryForm(categories, formikValues, handleSubmit, error) }
 				</Grid.Column>
 			</Grid>
 		</div>

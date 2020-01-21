@@ -14,13 +14,15 @@ function AddTodo(props) {
 
 	useEffect(() => {
 		setUserid(props.userid);
-		const requestCategories = async () => {
-			const response = await fetch("/api/categories?filter[userid]=" + userid);
-			const { data } = await response.json();
-			setCategories(data);
-		};
-		requestCategories();
-	}, []);
+		if (userid != null) {
+			const requestCategories = async () => {
+				const response = await fetch("/api/categories?filter[userid]=" + userid);
+				const { data } = await response.json();
+				setCategories(data);
+			};
+			requestCategories();
+		}
+	}, [props]);
 
 	const handleSubmit = values => {
 		// Fix unwanted utc offset from form.
