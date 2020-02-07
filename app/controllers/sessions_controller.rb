@@ -35,7 +35,7 @@ class SessionsController < ApplicationController
         session.delete(:user_id)
         session.clear
         reset_session
-        put "Logout Complete"
+        puts "Logout Complete"
         render json: {
             status: 200,
             logged_out: true
