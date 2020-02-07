@@ -5,14 +5,13 @@ import TodoForm from "./_TodoForm";
 import { Grid } from "semantic-ui-react";
 
 function EditTodo(props) {
-	// userid state is not immediately available sometimes for Effect hook.
-	// Declare as state so useEffect will updated when userid is available.
 	const [userid, setUserid] = useState(props.userid);
 	const [categories, setCategories] = useState([]);
 	const [error, setError] = useState(false);
 	const todo = props.location.state.todo;
 
 	useEffect(() => {
+		setUserid(props.userid);
 		if (userid != null) {
 			const requestCategories = async () => {
 				const response = await fetch("/api/categories?filter[userid]=" + userid);
@@ -21,7 +20,7 @@ function EditTodo(props) {
 			};
 			requestCategories();
 		}
-	}, [userid]);
+	}, [userid, props]);
 
 	const handleSubmit = values => {
 		// Fix unwanted utc offset from form.

@@ -10,6 +10,7 @@ function EditCategory(props) {
 	const category = props.location.state.category;
 
 	useEffect(() => {
+		setUserid(props.userid);
 		if (userid != null) {
 			const requestCategories = async () => {
 				const response = await fetch("/api/categories?filter[userid]=" + userid);
@@ -18,7 +19,7 @@ function EditCategory(props) {
 			};
 			requestCategories();
 		}
-	}, [userid]);
+	}, [userid, props]);
 
 	const handleSubmit = values => {
 		const requestCategories = async () => {

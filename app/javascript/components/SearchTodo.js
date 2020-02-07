@@ -27,6 +27,7 @@ function SearchTodo(props) {
 	}
 
 	useEffect(() => {
+		setUserid(props.userid);
 		if (userid != null) {
 			const requestCategories = async () => {
 				const response = await fetch("/api/categories?filter[userid]=" + userid);
@@ -48,7 +49,7 @@ function SearchTodo(props) {
 			requestTodos();
 		}
 		setUpdating(false);
-	}, [updating, search, userid]);
+	}, [updating, search, userid, props]);
 
 	return (
 		<div>

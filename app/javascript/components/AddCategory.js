@@ -4,13 +4,12 @@ import CategoryForm from "./_CategoryForm";
 import { Grid } from "semantic-ui-react";
 
 function AddCategory(props) {
-	// userid state is not immediately available sometimes for Effect hook.
-	// Declare as state so useEffect will updated when userid is available.
 	const [userid, setUserid] = useState(props.userid);
 	const [error, setError] = useState(false);
 	const [categories, setCategories] = useState([]);
 
 	useEffect(() => {
+		setUserid(props.userid);
 		if (userid != null) {
 			const requestCategories = async () => {
 				const response = await fetch("/api/categories?filter[userid]=" + userid);
@@ -19,7 +18,7 @@ function AddCategory(props) {
 			};
 			requestCategories();
 		}
-	}, [userid]);
+	}, [userid, props]);
 
 	const handleSubmit = values => {
 		const requestCategories = async () => {

@@ -33,6 +33,7 @@ function TodoList(props) {
 	}
 
 	useEffect(() => {
+		setUserid(props.userid);
 		if (userid != null) {
 			const requestCategories = async () => {
 				const response = await fetch("/api/categories?filter[userid]=" + userid);
@@ -42,7 +43,7 @@ function TodoList(props) {
 			};
 			requestCategories();
 		}
-	}, [userid]);
+	}, [userid, props]);
 
 	return (
 		<div>
