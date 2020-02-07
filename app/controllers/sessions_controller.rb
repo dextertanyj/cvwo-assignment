@@ -1,5 +1,6 @@
 class SessionsController < ApplicationController
     include CurrentUserConcern
+    before_action :set_current_user, only: [:create, :logged_in]
 
     def create
         user = User.find_by(email: params["data"]["user"]["email"]).try(:authenticate, params["data"]["user"]["password"])
@@ -31,7 +32,9 @@ class SessionsController < ApplicationController
 
     def logout
         @current_user = nil
+        session.delete(:user_id)
         session.clear
+        reset_session
         render json: {
             status: 200,
             logged_out: true
