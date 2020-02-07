@@ -1,27 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { navigate } from "@reach/router";
-import TimezoneFix from './_TimezoneFix';
-import TodoForm from './_TodoForm';
-import { Grid } from 'semantic-ui-react';
+import TimezoneFix from "./_TimezoneFix";
+import TodoForm from "./_TodoForm";
+import { Grid } from "semantic-ui-react";
 
 function EditTodo(props) {
-
-	// UserID prop is not immediately available sometimes. 
-	// Declare as state so that it will get updated when available.
+	// userid state is not immediately available sometimes for Effect hook.
+	// Declare as state so useEffect will updated when userid is available.
 	const [userid, setUserid] = useState(props.userid);
 	const [categories, setCategories] = useState([]);
 	const [error, setError] = useState(false);
 	const todo = props.location.state.todo;
 
 	useEffect(() => {
-		setUserid(props.userid);
 		if (userid != null) {
 			const requestCategories = async () => {
 				const response = await fetch("/api/categories?filter[userid]=" + userid);
 				const { data } = await response.json();
 				setCategories(data);
 			};
-		requestCategories();
+			requestCategories();
 		}
 	}, [userid]);
 
@@ -30,7 +28,8 @@ function EditTodo(props) {
 		if (values.attributes.duedate != "") {
 			values.attributes.duedate = TimezoneFix(values.attributes.duedate);
 		}
-		// Change value of categoryid of all from -1 to null.
+		// Change value of categoryid of all from -1 to null
+		// as database expects null for todo with no category.
 		if (values.attributes.categoryid == "-1") {
 			values.attributes.categoryid = null;
 		}
@@ -43,6 +42,7 @@ function EditTodo(props) {
 				},
 				body: JSON.stringify({ data: values })
 			});
+			// Reset erorr state to false upon submission of form.
 			setError(false);
 			if (response.ok) {
 				navigate("/home");
@@ -55,6 +55,7 @@ function EditTodo(props) {
 
 	console.log(todo.attributes.duedate);
 
+	// Set orignal form values based on selected todo.
 	const formikValues = {
 		type: "todos",
 		id: todo.id,
@@ -63,18 +64,20 @@ function EditTodo(props) {
 			description: todo.attributes.description,
 			categoryid: todo.attributes.categoryid,
 			userid: userid,
+			// If duedate is null entry, replace with empty string as form does not handle null well.
+			// Otherwise, convert duedate to date type for form to handle.
 			duedate: todo.attributes.duedate == null ? "" : new Date(todo.attributes.duedate),
 			completed: todo.attributes.completed
 		}
-	}
+	};
 
 	return (
 		<div>
 			<Grid padded>
 				<Grid.Column>
 					<h2>Edit Todo</h2>
-						{ TodoForm(formikValues, handleSubmit, categories, error) }
-					</Grid.Column>
+					{TodoForm(formikValues, handleSubmit, categories, error)}
+				</Grid.Column>
 			</Grid>
 		</div>
 	);

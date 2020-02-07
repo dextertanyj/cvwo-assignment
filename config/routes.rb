@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+	
 	resources :sessions
 	resources :registrations
 
@@ -14,5 +15,6 @@ Rails.application.routes.draw do
 		jsonapi_resources :categories
 	end
 
- 	get "*path", to: "home#index", constraints: { format: "html" }
+	 get "*path", to: "home#index", constraints: { format: "html" }
+	 
 end

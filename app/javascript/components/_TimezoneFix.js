@@ -1,5 +1,5 @@
 function TimezoneFix(datetime) {
-
+	// Required to fix the UTC offset from updating database.
 	const utcOffset = new Date().getTimezoneOffset();
 	const utcOffsetHours = utcOffset / 60;
 
@@ -12,4 +12,4 @@ function TimezoneFix(datetime) {
 	return datetime;
 }
 
-export default TimezoneFix
+export default TimezoneFix;

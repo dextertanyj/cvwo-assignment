@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { navigate } from "@reach/router";
 import CategoryForm from "./_CategoryForm";
-import { Grid } from 'semantic-ui-react';
+import { Grid } from "semantic-ui-react";
 
 function EditCategory(props) {
-
 	const [userid, setUserid] = useState(props.userid);
 	const [error, setError] = useState(false);
 	const [categories, setCategories] = useState([]);
 	const category = props.location.state.category;
 
 	useEffect(() => {
-		setUserid(props.userid);
 		if (userid != null) {
 			const requestCategories = async () => {
 				const response = await fetch("/api/categories?filter[userid]=" + userid);
@@ -49,15 +47,15 @@ function EditCategory(props) {
 			name: category.attributes.name,
 			userid: userid
 		}
-	}
+	};
 
 	return (
 		<div>
-		<Grid padded>
-			<Grid.Column>
-				<h2>Rename Category</h2>
-				{ CategoryForm(categories, formikValues, handleSubmit, error) }
-			</Grid.Column>
+			<Grid padded>
+				<Grid.Column>
+					<h2>Rename Category</h2>
+					{CategoryForm(categories, formikValues, handleSubmit, error)}
+				</Grid.Column>
 			</Grid>
 		</div>
 	);

@@ -1,7 +1,4 @@
-import DeleteTodo from "./DeleteTodo";
-
-function DeleteCategory (userid, category) {
-
+function DeleteCategory(category) {
 	const deleteCategory = async () => {
 		const response = await fetch("/api/categories/" + category.id, {
 			method: "DELETE"

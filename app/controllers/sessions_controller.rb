@@ -3,7 +3,6 @@ class SessionsController < ApplicationController
 
     def create
         user = User.find_by(email: params["data"]["user"]["email"]).try(:authenticate, params["data"]["user"]["password"])
-        
         if user
             session[:user_id] = user.id
             render json: {
@@ -15,7 +14,6 @@ class SessionsController < ApplicationController
                 status: 401
             }, status: 401
         end
-
     end
     
     def logged_in

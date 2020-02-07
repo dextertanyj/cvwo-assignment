@@ -1,4 +1,4 @@
-function DeleteTodo (todo_id) {
+function DeleteTodo(todo_id) {
 	const requestTodos = async () => {
 		const response = await fetch("/api/todos/" + todo_id, {
 			method: "DELETE"

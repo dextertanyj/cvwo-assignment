@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { navigate } from "@reach/router";
-import TimezoneFix from './_TimezoneFix';
-import TodoForm from './_TodoForm';
-import { Grid } from 'semantic-ui-react';
+import TimezoneFix from "./_TimezoneFix";
+import TodoForm from "./_TodoForm";
+import { Grid } from "semantic-ui-react";
 
 function AddTodo(props) {
-
-	// UserID prop is not immediately available sometimes. 
-	// Declare as state so that it will get updated when available.
+	// userid state is not immediately available sometimes for Effect hook.
+	// Declare as state so useEffect will updated when userid is available.
 	const [userid, setUserid] = useState(props.userid);
 	const [categories, setCategories] = useState([]);
 	const [error, setError] = useState(false);
 
 	useEffect(() => {
-		setUserid(props.userid);
 		if (userid != null) {
 			const requestCategories = async () => {
 				const response = await fetch("/api/categories?filter[userid]=" + userid);
@@ -49,7 +47,7 @@ function AddTodo(props) {
 				setError(true);
 			}
 		};
-	requestTodos();
+		requestTodos();
 	};
 
 	const formikValues = {
@@ -62,15 +60,15 @@ function AddTodo(props) {
 			categoryid: null,
 			userid: userid
 		}
-	}
+	};
 
 	return (
 		<div>
 			<Grid padded>
 				<Grid.Column>
 					<h2>Add A New Todo</h2>
-						{ TodoForm(formikValues, handleSubmit, categories, error) }
-					</Grid.Column>
+					{TodoForm(formikValues, handleSubmit, categories, error)}
+				</Grid.Column>
 			</Grid>
 		</div>
 	);
