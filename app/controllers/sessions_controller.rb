@@ -32,9 +32,15 @@ class SessionsController < ApplicationController
 
     def logout
         @current_user = nil
-        session.delete(:user_id)
+        session[:user_id] = -1
         session.clear
         reset_session
+        if session[:user_id] 
+            puts "true"
+        else 
+            puts "false"
+        end
+        puts session[:user_id]
         puts "Logout Complete"
         render json: {
             status: 200,
