@@ -4,6 +4,7 @@ class SessionsController < ApplicationController
         user = User.find_by(email: params["data"]["user"]["email"]).try(:authenticate, params["data"]["user"]["password"])
         if user
             session[:user_id] = user.id
+            puts "created session: " + session.to_h.to_s
             render json: {
                 status: :created,
                 user: user

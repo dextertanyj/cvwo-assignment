@@ -4,6 +4,7 @@ class ApiController < ActionController::API
   
 	def authentication
 	# Check if request is valid using existance of session data.
+	puts "accessing session: " + session.to_h.to_s
 		if session[:user_id]
 	  		userid = session[:user_id]
 			url = request.original_url
