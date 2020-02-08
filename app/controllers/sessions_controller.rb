@@ -1,6 +1,4 @@
 class SessionsController < ApplicationController
-    include CurrentUserConcern
-    before_action :set_current_user, only: [:logged_in]
 
     def create
         user = User.find_by(email: params["data"]["user"]["email"]).try(:authenticate, params["data"]["user"]["password"])
@@ -18,7 +16,9 @@ class SessionsController < ApplicationController
     end
     
     def logged_in
-        if @current_user
+        puts "session info" + session.to_h.to_s
+        if session[:user_id]
+            @current_user = User.find(session[:user_id])
             render json: {
                 logged_in: true,
                 user: @current_user
@@ -36,9 +36,9 @@ class SessionsController < ApplicationController
         session.clear
         reset_session
         if session[:user_id] 
-            puts "true"
+            puts session.inspect
         else 
-            puts "false"
+            puts "false" + session.inspect
         end
         puts session[:user_id]
         puts "Logout Complete"
