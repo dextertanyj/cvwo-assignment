@@ -33,8 +33,11 @@ class SessionsController < ApplicationController
 
     def logout
         @current_user = nil
+        puts session.to_h.to_s
         session[:user_id] = -1
+        puts session.to_h.to_s
         session.clear
+        puts session.to_h.to_s
         reset_session
         if session[:user_id] 
             puts session.to_h.to_s
