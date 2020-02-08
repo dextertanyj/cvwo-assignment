@@ -36,9 +36,9 @@ class SessionsController < ApplicationController
         session.clear
         reset_session
         if session[:user_id] 
-            puts session.inspect
+            puts session.to_h.to_s
         else 
-            puts "false" + session.inspect
+            puts "false" + session.to_h.to_s
         end
         puts session[:user_id]
         puts "Logout Complete"
