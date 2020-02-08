@@ -10,7 +10,7 @@ import SearchTodo from "./SearchTodo";
 import SignIn from "./SignIn";
 import Registration from "./Registration";
 import LogOut from "./_LogOut";
-import { Menu, Icon, Container, Modal } from "semantic-ui-react";
+import { Menu, Icon, Container, Message, Grid } from "semantic-ui-react";
 
 function App() {
 	const [user, setUser] = useState({});
@@ -58,14 +58,14 @@ function App() {
 					</h1>
 				</Container>
 				{LoggedIn == "LOGGEDOUT" && (
-					<Modal open={true}>
-						<Modal.Header>Complete Log Out</Modal.Header>
-						<Modal.Content>
-							<Modal.Description>
-								<p>Log out completely by closing all browser windows.</p>
-							</Modal.Description>
-						</Modal.Content>
-					</Modal>
+					<Grid padded>
+						<Grid.Column>
+							<Message>
+								<Message.Header>Thank you for using Todo List.</Message.Header>
+								<p>For security reasons, it is advisable to clear your cookies after each session.</p>
+							</Message>
+						</Grid.Column>
+					</Grid>
 				)}
 				{LoggedIn == "LOGGEDIN" && (
 					<Menu stackable fluid widths={6}>

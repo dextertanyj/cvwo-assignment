@@ -4,7 +4,6 @@ class SessionsController < ApplicationController
         user = User.find_by(email: params["data"]["user"]["email"]).try(:authenticate, params["data"]["user"]["password"])
         if user
             session[:user_id] = user.id
-            puts "created session: " + session.to_h.to_s
             render json: {
                 status: :created,
                 user: user
@@ -17,7 +16,6 @@ class SessionsController < ApplicationController
     end
     
     def logged_in
-        puts "session info" + session.to_h.to_s
         if session[:user_id]
             @current_user = User.find(session[:user_id])
             render json: {
@@ -33,9 +31,7 @@ class SessionsController < ApplicationController
 
     def logout
         @current_user = nil
-        session.clear
         reset_session
-        puts "Logout Complete"
         render json: {
             status: 200,
             logged_out: true
