@@ -19,7 +19,7 @@ function EditCategory(props) {
 			};
 			requestCategories();
 		}
-	}, [userid, props]);
+	}, [userid]);
 
 	const handleSubmit = values => {
 		const requestCategories = async () => {

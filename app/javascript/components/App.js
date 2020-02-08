@@ -10,11 +10,11 @@ import SearchTodo from "./SearchTodo";
 import SignIn from "./SignIn";
 import Registration from "./Registration";
 import LogOut from "./_LogOut";
-import { Menu, Icon, Container } from "semantic-ui-react";
+import { Menu, Icon, Container, Modal } from "semantic-ui-react";
 
 function App() {
 	const [user, setUser] = useState({});
-	const [LoggedIn, setLoggedIn] = useState("LOGGEDOUT");
+	const [LoggedIn, setLoggedIn] = useState("");
 
 	function handleLogOut() {
 		if (LogOut()) {
@@ -32,18 +32,20 @@ function App() {
 
 	// Check if session cookie is available, otherwise force redirect to login page.
 	useEffect(() => {
-		const requestCurrentUser = async () => {
-			const response = await fetch("/logged_in");
-			const { logged_in, user } = await response.json();
-			if (logged_in) {
-				setLoggedIn("LOGGEDIN");
-				setUser(user);
-				navigate("/home");
-			} else {
-				navigate("/");
-			}
-		};
-		requestCurrentUser();
+		if (LoggedIn == "") {
+			const requestCurrentUser = async () => {
+				const response = await fetch("/logged_in");
+				const { logged_in, user } = await response.json();
+				if (logged_in) {
+					setLoggedIn("LOGGEDIN");
+					setUser(user);
+					navigate("/home");
+				} else {
+					navigate("/");
+				}
+			};
+			requestCurrentUser();
+		}
 	}, []);
 
 	return (
@@ -55,6 +57,16 @@ function App() {
 						TODO LIST
 					</h1>
 				</Container>
+				{LoggedIn == "LOGGEDOUT" && (
+					<Modal open={true}>
+						<Modal.Header>Complete Log Out</Modal.Header>
+						<Modal.Content>
+							<Modal.Description>
+								<p>Log out completely by closing all browser windows.</p>
+							</Modal.Description>
+						</Modal.Content>
+					</Modal>
+				)}
 				{LoggedIn == "LOGGEDIN" && (
 					<Menu stackable fluid widths={6}>
 						<Menu.Item as={Link} to="/home">

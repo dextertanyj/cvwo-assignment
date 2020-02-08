@@ -49,7 +49,7 @@ function SearchTodo(props) {
 			requestTodos();
 		}
 		setUpdating(false);
-	}, [updating, search, userid, props]);
+	}, [updating, search, userid]);
 
 	return (
 		<div>

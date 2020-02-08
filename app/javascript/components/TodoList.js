@@ -94,7 +94,7 @@ function TodoList(props) {
 			};
 			requestTodos();
 		}
-	}, [selected, mode, sort, userid, props]);
+	}, [selected, mode, sort, userid]);
 
 	return (
 		<div>

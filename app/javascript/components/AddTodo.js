@@ -19,7 +19,7 @@ function AddTodo(props) {
 			};
 			requestCategories();
 		}
-	}, [userid, props]);
+	}, [userid]);
 
 	const handleSubmit = values => {
 		// Fix unwanted utc offset from form.

@@ -43,7 +43,7 @@ function TodoList(props) {
 			};
 			requestCategories();
 		}
-	}, [userid, props]);
+	}, [userid]);
 
 	return (
 		<div>
